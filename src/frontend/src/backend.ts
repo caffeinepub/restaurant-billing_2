@@ -89,10 +89,167 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface backendInterface {
+export interface BillItem {
+    name: string;
+    quantity: bigint;
+    price: bigint;
 }
+export interface MenuItem {
+    name: string;
+    price: bigint;
+}
+export type Time = bigint;
+export interface Bill {
+    customerName?: string;
+    discountAmount: bigint;
+    gstPercent: bigint;
+    discountPercent: bigint;
+    gstAmount: bigint;
+    grandTotal: bigint;
+    timestamp: Time;
+    items: Array<BillItem>;
+    subtotal: bigint;
+}
+export interface backendInterface {
+    addMenuItem(name: string, price: bigint): Promise<bigint>;
+    getAllBills(): Promise<Array<Bill>>;
+    getBill(id: bigint): Promise<Bill>;
+    getMenu(): Promise<Array<MenuItem>>;
+    removeMenuItem(id: bigint): Promise<void>;
+    saveBill(customerName: string | null, items: Array<BillItem>, discountPercent: bigint, gstPercent: bigint, subtotal: bigint, discountAmount: bigint, gstAmount: bigint, grandTotal: bigint): Promise<bigint>;
+}
+import type { Bill as _Bill, BillItem as _BillItem, Time as _Time } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async addMenuItem(arg0: string, arg1: bigint): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addMenuItem(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addMenuItem(arg0, arg1);
+            return result;
+        }
+    }
+    async getAllBills(): Promise<Array<Bill>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllBills();
+                return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllBills();
+            return from_candid_vec_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getBill(arg0: bigint): Promise<Bill> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getBill(arg0);
+                return from_candid_Bill_n2(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getBill(arg0);
+            return from_candid_Bill_n2(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getMenu(): Promise<Array<MenuItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMenu();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMenu();
+            return result;
+        }
+    }
+    async removeMenuItem(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeMenuItem(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeMenuItem(arg0);
+            return result;
+        }
+    }
+    async saveBill(arg0: string | null, arg1: Array<BillItem>, arg2: bigint, arg3: bigint, arg4: bigint, arg5: bigint, arg6: bigint, arg7: bigint): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveBill(to_candid_opt_n5(this._uploadFile, this._downloadFile, arg0), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveBill(to_candid_opt_n5(this._uploadFile, this._downloadFile, arg0), arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            return result;
+        }
+    }
+}
+function from_candid_Bill_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Bill): Bill {
+    return from_candid_record_n3(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    customerName: [] | [string];
+    discountAmount: bigint;
+    gstPercent: bigint;
+    discountPercent: bigint;
+    gstAmount: bigint;
+    grandTotal: bigint;
+    timestamp: _Time;
+    items: Array<_BillItem>;
+    subtotal: bigint;
+}): {
+    customerName?: string;
+    discountAmount: bigint;
+    gstPercent: bigint;
+    discountPercent: bigint;
+    gstAmount: bigint;
+    grandTotal: bigint;
+    timestamp: Time;
+    items: Array<BillItem>;
+    subtotal: bigint;
+} {
+    return {
+        customerName: record_opt_to_undefined(from_candid_opt_n4(_uploadFile, _downloadFile, value.customerName)),
+        discountAmount: value.discountAmount,
+        gstPercent: value.gstPercent,
+        discountPercent: value.discountPercent,
+        gstAmount: value.gstAmount,
+        grandTotal: value.grandTotal,
+        timestamp: value.timestamp,
+        items: value.items,
+        subtotal: value.subtotal
+    };
+}
+function from_candid_vec_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Bill>): Array<Bill> {
+    return value.map((x)=>from_candid_Bill_n2(_uploadFile, _downloadFile, x));
+}
+function to_candid_opt_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+    return value === null ? candid_none() : candid_some(value);
 }
 export interface CreateActorOptions {
     agent?: Agent;

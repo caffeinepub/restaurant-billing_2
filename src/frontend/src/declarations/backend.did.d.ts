@@ -10,7 +10,44 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface _SERVICE {}
+export interface Bill {
+  'customerName' : [] | [string],
+  'discountAmount' : bigint,
+  'gstPercent' : bigint,
+  'discountPercent' : bigint,
+  'gstAmount' : bigint,
+  'grandTotal' : bigint,
+  'timestamp' : Time,
+  'items' : Array<BillItem>,
+  'subtotal' : bigint,
+}
+export interface BillItem {
+  'name' : string,
+  'quantity' : bigint,
+  'price' : bigint,
+}
+export interface MenuItem { 'name' : string, 'price' : bigint }
+export type Time = bigint;
+export interface _SERVICE {
+  'addMenuItem' : ActorMethod<[string, bigint], bigint>,
+  'getAllBills' : ActorMethod<[], Array<Bill>>,
+  'getBill' : ActorMethod<[bigint], Bill>,
+  'getMenu' : ActorMethod<[], Array<MenuItem>>,
+  'removeMenuItem' : ActorMethod<[bigint], undefined>,
+  'saveBill' : ActorMethod<
+    [
+      [] | [string],
+      Array<BillItem>,
+      bigint,
+      bigint,
+      bigint,
+      bigint,
+      bigint,
+      bigint,
+    ],
+    bigint
+  >,
+}
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
 export declare const idlFactory: IDL.InterfaceFactory;

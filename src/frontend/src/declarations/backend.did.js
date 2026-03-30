@@ -8,10 +8,90 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const idlService = IDL.Service({});
+export const Time = IDL.Int;
+export const BillItem = IDL.Record({
+  'name' : IDL.Text,
+  'quantity' : IDL.Nat,
+  'price' : IDL.Nat,
+});
+export const Bill = IDL.Record({
+  'customerName' : IDL.Opt(IDL.Text),
+  'discountAmount' : IDL.Nat,
+  'gstPercent' : IDL.Nat,
+  'discountPercent' : IDL.Nat,
+  'gstAmount' : IDL.Nat,
+  'grandTotal' : IDL.Nat,
+  'timestamp' : Time,
+  'items' : IDL.Vec(BillItem),
+  'subtotal' : IDL.Nat,
+});
+export const MenuItem = IDL.Record({ 'name' : IDL.Text, 'price' : IDL.Nat });
+
+export const idlService = IDL.Service({
+  'addMenuItem' : IDL.Func([IDL.Text, IDL.Nat], [IDL.Nat], []),
+  'getAllBills' : IDL.Func([], [IDL.Vec(Bill)], ['query']),
+  'getBill' : IDL.Func([IDL.Nat], [Bill], ['query']),
+  'getMenu' : IDL.Func([], [IDL.Vec(MenuItem)], ['query']),
+  'removeMenuItem' : IDL.Func([IDL.Nat], [], []),
+  'saveBill' : IDL.Func(
+      [
+        IDL.Opt(IDL.Text),
+        IDL.Vec(BillItem),
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+      ],
+      [IDL.Nat],
+      [],
+    ),
+});
 
 export const idlInitArgs = [];
 
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
+export const idlFactory = ({ IDL }) => {
+  const Time = IDL.Int;
+  const BillItem = IDL.Record({
+    'name' : IDL.Text,
+    'quantity' : IDL.Nat,
+    'price' : IDL.Nat,
+  });
+  const Bill = IDL.Record({
+    'customerName' : IDL.Opt(IDL.Text),
+    'discountAmount' : IDL.Nat,
+    'gstPercent' : IDL.Nat,
+    'discountPercent' : IDL.Nat,
+    'gstAmount' : IDL.Nat,
+    'grandTotal' : IDL.Nat,
+    'timestamp' : Time,
+    'items' : IDL.Vec(BillItem),
+    'subtotal' : IDL.Nat,
+  });
+  const MenuItem = IDL.Record({ 'name' : IDL.Text, 'price' : IDL.Nat });
+  
+  return IDL.Service({
+    'addMenuItem' : IDL.Func([IDL.Text, IDL.Nat], [IDL.Nat], []),
+    'getAllBills' : IDL.Func([], [IDL.Vec(Bill)], ['query']),
+    'getBill' : IDL.Func([IDL.Nat], [Bill], ['query']),
+    'getMenu' : IDL.Func([], [IDL.Vec(MenuItem)], ['query']),
+    'removeMenuItem' : IDL.Func([IDL.Nat], [], []),
+    'saveBill' : IDL.Func(
+        [
+          IDL.Opt(IDL.Text),
+          IDL.Vec(BillItem),
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+        ],
+        [IDL.Nat],
+        [],
+      ),
+  });
+};
 
 export const init = ({ IDL }) => { return []; };
