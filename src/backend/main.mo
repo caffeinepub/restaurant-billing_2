@@ -33,9 +33,11 @@ actor {
   let menu = Map.empty<Nat, MenuItem>();
   let bills = Map.empty<Nat, Bill>();
   var billCounter = 0;
+  var menuCounter = 0;
 
   public shared ({ caller }) func addMenuItem(name : Text, price : Nat) : async Nat {
-    let id = menu.size();
+    let id = menuCounter;
+    menuCounter += 1;
     let item : MenuItem = { name; price };
     menu.add(id, item);
     id;
