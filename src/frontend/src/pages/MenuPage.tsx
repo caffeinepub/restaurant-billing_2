@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2, Plus, Trash2, UtensilsCrossed } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -171,40 +172,42 @@ export default function MenuPage() {
                 No menu items yet. Add your first item above.
               </div>
             ) : (
-              <AnimatePresence>
-                {menuItems.map((item, idx) => (
-                  <motion.div
-                    key={`${item.name}-${idx}`}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10, height: 0 }}
-                    transition={{ duration: 0.2, delay: idx * 0.03 }}
-                    data-ocid={`menu.item.${idx + 1}`}
-                    className="flex items-center justify-between py-3 border-b border-border/60 last:border-0 group"
-                  >
-                    <div>
-                      <p className="font-medium text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        ₹{rupees(item.price).toFixed(2)}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      data-ocid={`menu.delete_button.${idx + 1}`}
-                      onClick={() => handleRemove(idx)}
-                      disabled={removingIndex === idx}
-                      className="text-muted-foreground hover:text-destructive transition-colors p-2 rounded-md hover:bg-destructive/10 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
-                      aria-label={`Remove ${item.name}`}
+              <ScrollArea className="h-[60vh] pr-3">
+                <AnimatePresence>
+                  {menuItems.map((item, idx) => (
+                    <motion.div
+                      key={`${item.name}-${idx}`}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10, height: 0 }}
+                      transition={{ duration: 0.2, delay: idx * 0.03 }}
+                      data-ocid={`menu.item.${idx + 1}`}
+                      className="flex items-center justify-between py-3 border-b border-border/60 last:border-0 group"
                     >
-                      {removingIndex === idx ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+                      <div>
+                        <p className="font-medium text-sm">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          ₹{rupees(item.price).toFixed(2)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        data-ocid={`menu.delete_button.${idx + 1}`}
+                        onClick={() => handleRemove(idx)}
+                        disabled={removingIndex === idx}
+                        className="text-muted-foreground hover:text-destructive transition-colors p-2 rounded-md hover:bg-destructive/10 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        {removingIndex === idx ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </ScrollArea>
             )}
           </CardContent>
         </Card>

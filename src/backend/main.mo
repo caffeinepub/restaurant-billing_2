@@ -3,9 +3,9 @@ import Nat "mo:core/Nat";
 import Time "mo:core/Time";
 import Array "mo:core/Array";
 import Runtime "mo:core/Runtime";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   type MenuItem = {
     name : Text;
