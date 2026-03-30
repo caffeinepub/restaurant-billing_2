@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Plus, Trash2, UtensilsCrossed } from "lucide-react";
+import { Loader2, Plus, Search, Trash2, UtensilsCrossed } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -25,7 +25,14 @@ export default function MenuPage() {
 
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
-  const [removingIndex, setRemovingIndex] = useState<number | null>(null);
+  const [removingId, setRemovingId] = useState<bigint | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredItems = menuItems
+    ? menuItems.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase()),
+      )
+    : [];
 
   const handleAdd = async () => {
     if (!newName.trim()) {
@@ -50,15 +57,15 @@ export default function MenuPage() {
     }
   };
 
-  const handleRemove = async (index: number) => {
-    setRemovingIndex(index);
+  const handleRemove = async (id: bigint) => {
+    setRemovingId(id);
     try {
-      await removeMenuItem.mutateAsync(BigInt(index));
+      await removeMenuItem.mutateAsync(id);
       toast.success("Item removed from menu");
     } catch {
       toast.error("Failed to remove item");
     } finally {
-      setRemovingIndex(null);
+      setRemovingId(null);
     }
   };
 
@@ -172,42 +179,58 @@ export default function MenuPage() {
                 No menu items yet. Add your first item above.
               </div>
             ) : (
-              <ScrollArea className="h-[60vh] pr-3">
-                <AnimatePresence>
-                  {menuItems.map((item, idx) => (
-                    <motion.div
-                      key={`${item.name}-${idx}`}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10, height: 0 }}
-                      transition={{ duration: 0.2, delay: idx * 0.03 }}
-                      data-ocid={`menu.item.${idx + 1}`}
-                      className="flex items-center justify-between py-3 border-b border-border/60 last:border-0 group"
-                    >
-                      <div>
-                        <p className="font-medium text-sm">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          ₹{rupees(item.price).toFixed(2)}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        data-ocid={`menu.delete_button.${idx + 1}`}
-                        onClick={() => handleRemove(idx)}
-                        disabled={removingIndex === idx}
-                        className="text-muted-foreground hover:text-destructive transition-colors p-2 rounded-md hover:bg-destructive/10 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
-                        aria-label={`Remove ${item.name}`}
-                      >
-                        {removingIndex === idx ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </ScrollArea>
+              <>
+                {/* Search Bar */}
+                <div className="relative mb-3">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search menu items..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="h-9 pl-9"
+                  />
+                </div>
+                {filteredItems.length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground text-sm">
+                    No items match "{search}"
+                  </div>
+                ) : (
+                  <ScrollArea className="h-[55vh] pr-3">
+                    <AnimatePresence>
+                      {filteredItems.map((item) => (
+                        <motion.div
+                          key={String(item.id)}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 10, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-center justify-between py-3 border-b border-border/60 last:border-0 group"
+                        >
+                          <div>
+                            <p className="font-medium text-sm">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              ₹{rupees(item.price).toFixed(2)}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemove(item.id)}
+                            disabled={removingId === item.id}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-2 rounded-md hover:bg-destructive/10 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-50"
+                            aria-label={`Remove ${item.name}`}
+                          >
+                            {removingId === item.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </ScrollArea>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

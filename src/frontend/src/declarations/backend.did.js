@@ -25,7 +25,7 @@ export const Bill = IDL.Record({
   'items' : IDL.Vec(BillItem),
   'subtotal' : IDL.Nat,
 });
-export const MenuItem = IDL.Record({ 'name' : IDL.Text, 'price' : IDL.Nat });
+export const MenuItem = IDL.Record({ 'id' : IDL.Nat, 'name' : IDL.Text, 'price' : IDL.Nat });
 
 export const idlService = IDL.Service({
   'addMenuItem' : IDL.Func([IDL.Text, IDL.Nat], [IDL.Nat], []),
@@ -69,7 +69,7 @@ export const idlFactory = ({ IDL }) => {
     'items' : IDL.Vec(BillItem),
     'subtotal' : IDL.Nat,
   });
-  const MenuItem = IDL.Record({ 'name' : IDL.Text, 'price' : IDL.Nat });
+  const MenuItem = IDL.Record({ 'id' : IDL.Nat, 'name' : IDL.Text, 'price' : IDL.Nat });
   
   return IDL.Service({
     'addMenuItem' : IDL.Func([IDL.Text, IDL.Nat], [IDL.Nat], []),

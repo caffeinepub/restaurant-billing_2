@@ -17,6 +17,7 @@ import {
   Plus,
   Printer,
   Receipt,
+  Search,
   ShoppingCart,
   Trash2,
   UtensilsCrossed,
@@ -51,6 +52,13 @@ export default function BillingPage() {
   const [showReceipt, setShowReceipt] = useState(false);
   const [billNo, setBillNo] = useState("");
   const [billTimestamp, setBillTimestamp] = useState<Date>(new Date());
+  const [menuSearch, setMenuSearch] = useState("");
+
+  const filteredMenu = menuItems
+    ? menuItems.filter((item) =>
+        item.name.toLowerCase().includes(menuSearch.toLowerCase()),
+      )
+    : [];
 
   const cartItems = Array.from(cart.values());
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
@@ -195,62 +203,80 @@ export default function BillingPage() {
                 No menu items yet. Add items in Menu Management.
               </div>
             ) : (
-              <div className="space-y-2">
-                {menuItems.map((item, idx) => {
-                  const qty = getQty(item.name);
-                  const price = rupees(item.price);
-                  return (
-                    <motion.div
-                      key={item.name}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.2, delay: idx * 0.04 }}
-                      data-ocid={`billing.menu.item.${idx + 1}`}
-                      className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:border-primary/30 hover:bg-secondary/50 transition-colors"
-                    >
-                      <div>
-                        <p className="font-medium text-sm text-foreground">
-                          {item.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          ₹{price.toFixed(2)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {qty > 0 && (
-                          <span className="text-sm font-semibold text-primary min-w-[3rem] text-right">
-                            ₹{(price * qty).toFixed(2)}
-                          </span>
-                        )}
-                        <div className="flex items-center gap-1">
-                          {qty > 0 && (
-                            <button
-                              type="button"
-                              data-ocid={`billing.menu.item.${idx + 1}`}
-                              onClick={() => setQty(item.name, price, qty - 1)}
-                              className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/50 transition-colors"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                          )}
-                          {qty > 0 && (
-                            <span className="w-6 text-center text-sm font-bold">
-                              {qty}
-                            </span>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => setQty(item.name, price, qty + 1)}
-                            className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 transition-opacity"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
+              <>
+                {/* Search */}
+                <div className="relative mb-3">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search menu..."
+                    value={menuSearch}
+                    onChange={(e) => setMenuSearch(e.target.value)}
+                    className="h-9 pl-9"
+                  />
+                </div>
+                {filteredMenu.length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground text-sm">
+                    No items match "{menuSearch}"
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                    {filteredMenu.map((item) => {
+                      const qty = getQty(item.name);
+                      const price = rupees(item.price);
+                      return (
+                        <div
+                          key={String(item.id)}
+                          data-ocid={`billing.menu.item.${item.id}`}
+                          className="flex items-center justify-between p-3 rounded-lg border border-border bg-card hover:border-primary/30 hover:bg-secondary/50 transition-colors"
+                        >
+                          <div>
+                            <p className="font-medium text-sm text-foreground">
+                              {item.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              ₹{price.toFixed(2)}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {qty > 0 && (
+                              <span className="text-sm font-semibold text-primary min-w-[3rem] text-right">
+                                ₹{(price * qty).toFixed(2)}
+                              </span>
+                            )}
+                            <div className="flex items-center gap-1">
+                              {qty > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setQty(item.name, price, qty - 1)
+                                  }
+                                  className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/50 transition-colors"
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                              )}
+                              {qty > 0 && (
+                                <span className="w-6 text-center text-sm font-bold">
+                                  {qty}
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setQty(item.name, price, qty + 1)
+                                }
+                                className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 transition-opacity"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

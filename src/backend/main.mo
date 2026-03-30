@@ -12,6 +12,12 @@ actor {
     price : Nat;
   };
 
+  type MenuItemWithId = {
+    id : Nat;
+    name : Text;
+    price : Nat;
+  };
+
   type BillItem = {
     name : Text;
     price : Nat;
@@ -50,8 +56,10 @@ actor {
     menu.remove(id);
   };
 
-  public query ({ caller }) func getMenu() : async [MenuItem] {
-    menu.values().toArray();
+  public query ({ caller }) func getMenu() : async [MenuItemWithId] {
+    menu.entries().map(func((id, item) : (Nat, MenuItem)) : MenuItemWithId {
+      { id; name = item.name; price = item.price }
+    }).toArray();
   };
 
   public shared ({ caller }) func saveBill(

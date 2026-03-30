@@ -95,6 +95,7 @@ export interface BillItem {
     price: bigint;
 }
 export interface MenuItem {
+    id: bigint;
     name: string;
     price: bigint;
 }

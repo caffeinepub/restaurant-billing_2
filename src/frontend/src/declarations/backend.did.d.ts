@@ -26,7 +26,7 @@ export interface BillItem {
   'quantity' : bigint,
   'price' : bigint,
 }
-export interface MenuItem { 'name' : string, 'price' : bigint }
+export interface MenuItem { 'id' : bigint, 'name' : string, 'price' : bigint }
 export type Time = bigint;
 export interface _SERVICE {
   'addMenuItem' : ActorMethod<[string, bigint], bigint>,
